@@ -20,10 +20,14 @@ jobs:
         env:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
         run: |
-          set +e
-          echo "### Deploy Output" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cargo shuttle deploy --name kprsnt-in 2>&1 | tee deploy.log >> $GITHUB_STEP_SUMMARY
-          EXIT_CODE=${PIPESTATUS[0]}
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          exit $EXIT_CODE
+          cargo shuttle deploy --name kprsnt-in 2>&1 | tee deploy.log
+
+      - name: Report log
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${{ github.repository }}/commits/${{ github.sha }}/comments -f body="### Deploy Log:
+          \`\`\`
+          $(cat deploy.log 2>/dev/null || echo 'No log')
+          \`\`\`"
