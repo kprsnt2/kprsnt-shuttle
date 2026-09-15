@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to Shuttle
-        uses: shuttle-hq/deploy-action@v2
+        uses: shuttle-hq/deploy-action@main
         with:
-          shuttle-api-key: ${{ secrets.SHUTTLE_API_KEY }}
+          deploy-key: ${{ secrets.SHUTTLE_API_KEY }}
+          name: "kprsnt-in"
+          cargo-shuttle-version: "0.48.0"
