@@ -26,6 +26,18 @@ impl AppState {
 
         let mut env = Environment::new();
         env.set_loader(minijinja::path_loader(&templates_dir));
+        env.add_function(
+            "url_for",
+            |endpoint: String, kwargs: minijinja::value::Kwargs| -> Result<String, minijinja::Error> {
+                let filename: Option<String> = kwargs.get("filename")?;
+                let path = filename.unwrap_or_default();
+                if endpoint == "static" {
+                    Ok(format!("/static/{path}"))
+                } else {
+                    Ok(format!("/{path}"))
+                }
+            },
+        );
 
         let data_path = base_dir.join("data").join("portfolio.json");
         let portfolio_data: Value = if data_path.exists() {
@@ -42,7 +54,7 @@ impl AppState {
         }
     }
 
-    fn render(&self, template_name: &str, ctx: Value) -> Result<Html<String>, (StatusCode, String)> {
+    fn render(&self, template_name: &str, ctx: minijinja::Value) -> Result<Html<String>, (StatusCode, String)> {
         let tmpl = self
             .jinja
             .get_template(template_name)

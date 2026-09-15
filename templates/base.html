@@ -22,9 +22,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="{{ url_for('static', filename='css/custom.css') }}?v=3" rel="stylesheet">
+    <link href="/static/css/custom.css?v=3" rel="stylesheet">
     <!-- Chat Widget CSS -->
-    <link href="{{ url_for('static', filename='css/chat-widget.css') }}?v=3" rel="stylesheet">
+    <link href="/static/css/chat-widget.css?v=3" rel="stylesheet">
 </head>
 
 <body>
@@ -38,38 +38,38 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">About Me</a>
+                        <a class="nav-link" href="/">About Me</a>
                     </li>
                     <!-- Portfolio Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path in ['/skills', '/projects', '/resume'] %}active{% endif %}"
+                        <a class="nav-link dropdown-toggle"
                             href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Portfolio
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item {% if request.path == '/skills' %}active{% endif %}" href="/skills"><i class="fas fa-tools" style="width:20px;"></i> Skills</a></li>
-                            <li><a class="dropdown-item {% if request.path == '/projects' %}active{% endif %}" href="/projects"><i class="fas fa-rocket" style="width:20px;"></i> Projects</a></li>
-                            <li><a class="dropdown-item {% if request.path == '/resume' or '/resume/' in request.path %}active{% endif %}" href="/resume"><i class="fas fa-file-alt" style="width:20px;"></i> Resume</a></li>
+                            <li><a class="dropdown-item" href="/skills"><i class="fas fa-tools" style="width:20px;"></i> Skills</a></li>
+                            <li><a class="dropdown-item" href="/projects"><i class="fas fa-rocket" style="width:20px;"></i> Projects</a></li>
+                            <li><a class="dropdown-item" href="/resume"><i class="fas fa-file-alt" style="width:20px;"></i> Resume</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/blog' or request.path.startswith('/blog/') %}active{% endif %}" href="/blog">Blog</a>
+                        <a class="nav-link" href="/blog">Blog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/api/docs' or request.path == '/docs' %}active{% endif %}" href="/docs">Docs</a>
+                        <a class="nav-link" href="/docs">Docs</a>
                     </li>
                     <!-- AI Eco Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path in ['/ecosystem', '/aie/blogs', '/aie', '/mcp'] or request.path.startswith('/aie/') %}active{% endif %}"
+                        <a class="nav-link dropdown-toggle"
                             href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-microchip" style="margin-right: 4px;"></i>AI Eco
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item {% if request.path == '/aie' %}active{% endif %}" href="/aie"><i class="fas fa-network-wired" style="width:20px;"></i> AI Eco Hub</a></li>
-                            <li><a class="dropdown-item {% if request.path == '/ecosystem' %}active{% endif %}" href="/ecosystem"><i class="fas fa-tachometer-alt" style="width:20px;"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item {% if request.path == '/mcp' %}active{% endif %}" href="/mcp"><i class="fas fa-plug" style="width:20px;"></i> MCP Server</a></li>
+                            <li><a class="dropdown-item" href="/aie"><i class="fas fa-network-wired" style="width:20px;"></i> AI Eco Hub</a></li>
+                            <li><a class="dropdown-item" href="/ecosystem"><i class="fas fa-tachometer-alt" style="width:20px;"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item" href="/mcp"><i class="fas fa-plug" style="width:20px;"></i> MCP Server</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item {% if request.path == '/aie/blogs' or request.path.startswith('/aie/blog/') %}active{% endif %}" href="/aie/blogs"><i class="fas fa-satellite-dish" style="width:20px;"></i> AIE Blogs</a></li>
+                            <li><a class="dropdown-item" href="/aie/blogs"><i class="fas fa-satellite-dish" style="width:20px;"></i> AIE Blogs</a></li>
                         </ul>
                     </li>
 
@@ -236,7 +236,23 @@
         })();
     </script>
     <!-- RAG Chat Widget -->
-    <script src="{{ url_for('static', filename='js/chat-widget.js') }}?v=3"></script>
+    <script src="/static/js/chat-widget.js?v=3"></script>
+    <script>
+        (function() {
+            const path = window.location.pathname;
+            document.querySelectorAll('.navbar-nav a.nav-link, .navbar-nav a.dropdown-item').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === path || (href !== '/' && href !== '#' && path.startsWith(href))) {
+                    link.classList.add('active');
+                    const dropdown = link.closest('.dropdown');
+                    if (dropdown) {
+                        const toggle = dropdown.querySelector('.dropdown-toggle');
+                        if (toggle) toggle.classList.add('active');
+                    }
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>
