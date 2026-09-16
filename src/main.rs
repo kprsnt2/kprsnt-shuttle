@@ -306,11 +306,19 @@ pub fn create_router() -> Router {
 }
 
 // -------------------------------------------------------------
-// Shuttle Entrypoint (100% Free Persistent Axum Server)
+// Entrypoint
 // -------------------------------------------------------------
 
-#[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
+#[tokio::main]
+async fn main() {
     let router = create_router();
-    Ok(router.into())
+    let port: u16 = std::env::var("PORT")
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(8080);
+    let listener = tokio::net::TcpListener::bind(("0.0.0.0", port))
+        .await
+        .expect("failed to bind port");
+    println!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, router).await.unwrap();
 }

@@ -1,4 +1,4 @@
-name: Deploy to Shuttle.rs
+name: Deploy to Cloud Run
 
 on:
   push:
@@ -9,14 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install cargo-binstall
-        run: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install cargo-shuttle
-        run: cargo binstall -y --locked cargo-shuttle@0.48.0
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Deploy to Shuttle
-        env:
-          SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
-        run: cargo shuttle deploy --name kprsnt-in
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: kprsnt-in
+          source: .
+          region: asia-south1
+          flags: '--allow-unauthenticated --min-instances=0 --max-instances=5 --memory=512Mi --cpu=1'
